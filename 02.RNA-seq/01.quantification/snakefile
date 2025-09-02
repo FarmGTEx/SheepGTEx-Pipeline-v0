@@ -5,7 +5,7 @@
 
 ######################################################################################################################
 ##                                                                                                                  ##
-##                         The pipeline is used for read alignment and expression quantification individually from RNA-seq data                                    ##
+##      The pipeline is used for read alignment and expression quantification individually from RNA-seq data        ##
 ##                                                                                                                  ##
 ######################################################################################################################
 

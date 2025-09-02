@@ -3,7 +3,7 @@
 
 As an essential component of the ongoing Farm animal Genotype-Tissue Expression (**FarmGTEx**, https://www.farmgtex.org/), the **SheepGTEx** (http://sheepgtex.farmgtex.org/) aims to establish a comprehensive public catalogue of genetic regulatory variants across diverse biological contexts (e.g., tissues, developmental stages, sex, environmental exposures, and genetic backgrounds) in sheep. This resource will serve as a foundational reference for understanding the genetic regulation of basic biological processes and complex traits. It will also support research in comparative transcriptomics, livestock evolution and domestication, precision breeding, sustainable agriculture, and human biomedicine.
 
-![SheepTEx-V0](https://raw.githubusercontent.com/FarmGTEx/SheepGTEx-Pipeline-v0/master/SheepGTEx-V0.jpg)
+![SheepGTEx-V0](https://raw.githubusercontent.com/FarmGTEx/SheepGTEx-Pipeline-v0/master/SheepGTEx-V0.jpg)
 
 ## 2. Analysis pipelines
 

@@ -1,0 +1,4 @@
+## config.yaml
+samplelist: sample.list
+reffa: /storage/public/home/2020060185/genome/sheep/reference/sheep.fna
+dbsnp: /storage/public/home/2020060185/genome/sheep/refpanel/Sheep3518.maf0.01.vcf

@@ -1,0 +1,62 @@
+__default__:
+  partition: "normal"
+  cpus: 4
+  mem: 32000000
+  name: "{rule}.{wildcards}"
+  error: Logs/{rule}/{wildcards}.%J.log
+  output: Logs/{rule}/{wildcards}.%J.log
+  #time: 24
+  mail-type: FAIL,TIME_LIMIT
+  mail-user: gongmian2767@126.com
+ 
+mergefq:
+  cpus: 1
+  mem: 8000000
+
+STAR2pass:
+  cpus: 8
+  mem: 100000000
+
+Dapars2_config:
+  cpus: 10
+  mem: 10000000
+  
+Dapars2:
+  cpus: 10
+  mem: 10000000
+  
+consExon_quant:
+  cpus: 1
+  mem: 8000000
+
+intron_quant:
+  cpus: 1
+  mem: 8000000
+
+combinebam:
+  cpus: 1
+  mem: 8000000
+
+GLIMPSE2impute:
+  cpus: 8
+  mem: 100000000
+
+recalINFO:
+  cpus: 1
+  mem: 8000000
+
+bam2Bedgraph:
+  cpus: 1
+  mem: 8000000
+
+combinewig:
+  cpus: 1
+  mem: 8000000
+
+phASER_gene_ae:
+  cpus: 1
+  mem: 8000000
+
+wasp_star:
+  cpus: 8
+  mem: 100000000

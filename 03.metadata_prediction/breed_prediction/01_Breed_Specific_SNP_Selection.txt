@@ -1,0 +1,61 @@
+#1. Remove outliers and exclude breeds with fewer than 6 individuals
+
+#2. Use the plink --within and --fst parameters to select breed-specific SNP loci
+plink --bfile Farm-GTEx_data --within /mnt/data/bigdata/sheep/gtex/fst/group.txt --fst --out sheep_gtex_fst --chr-set 26 --keep-allele-order
+
+#3. Use the Average Euclidean Distance(AED) method to select breed-specific loci
+       import vcf
+       from itertools import combinations
+       from collections import defaultdict
+
+       # Read the breed information from a text file
+       breed_info = {}
+       with open('/workspace/home/goat/supeng/sheep/sel_snp/fst_50k/phe.csv', 'r') as infile:
+           next(infile)  # Skip the header line
+           for line in infile:
+               parts = line.strip().split('\t')  # Assuming tab-separated values
+               if len(parts) >= 2:
+                   breed_info[parts[0]] = parts[1]
+
+       # Read the VCF file
+       vcf_reader = vcf.Reader(open('/workspace/home/goat/supeng/sheep/sel_snp/clean_sheepgtex.vcf', 'r'))
+
+       # Open the output file
+       with open('aed_output.txt', 'w') as out_file:
+           # Iterate over each SNP in the VCF
+           for record in vcf_reader:
+               allele_counts = defaultdict(lambda: [0, 0])
+
+               # Calculate allele frequencies for each breed
+               for sample in record.samples:
+                   breed = breed_info.get(sample.sample)
+                   if breed:
+                       genotype = sample['GT'].replace('.', '0')  # Replace missing data with 0
+                       alleles = genotype.split('/')
+                       for allele in alleles:
+                           if allele.isdigit():
+                               allele_counts[breed][int(allele)] += 1
+
+               # Calculate allele frequencies
+               allele_freqs = {breed: [count / sum(counts) if sum(counts) > 0 else 0 for count in counts]
+                               for breed, counts in allele_counts.items()}
+
+               # Calculate AED
+               aed_sum = 0
+               breed_pairs = list(combinations(allele_freqs.keys(), 2))
+               for b1, b2 in breed_pairs:
+                   aed_sum += (allele_freqs[b1][0] - allele_freqs[b2][0]) ** 2 + (allele_freqs[b1][1] - allele_freqs[b2][1]) ** 2
+
+               t = len(allele_freqs)
+               combinations_count = t * (t - 1) / 2
+               aed = (2 / combinations_count) * aed_sum if combinations_count else 0
+
+               # Write to file including chromosome information
+               snp_identifier = f"{record.CHROM}_{record.POS}"
+               out_file.write(f"{snp_identifier}\t{aed}\n")
+               out_file.flush()
+
+       print("AED calculation completed.")
+
+#4. Select breed-specific SNPs at different magnitudes based on AED and FST ranking
+vcftools --vcf filter_sheep_gtex.vcf --positions SNP_list.txt --recode --recode-INFO-all --out different_SNP_number_sheep_gtex

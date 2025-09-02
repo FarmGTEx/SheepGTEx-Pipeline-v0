@@ -1,0 +1,131 @@
+## snakefile
+# Author: Mian Gong
+# Date: May 25, 2023
+# Mail: gongmian2767@126.com
+
+# Input information
+SAMPLELIST = config["samplelist"]
+SAMPLES = [line.strip() for line in open(SAMPLELIST, 'r')]
+REFFA = config["reffa"]
+DBSNP = config["dbsnp"]
+CHROMS = [f'chr{i}' for i in range(1,27)] ; CHROMS.append('chrX') # chromosomes for sheep
+
+# rules
+rule all:
+    input:
+        expand("01.mapping/{sample}/{sample}.mkdup.bam", sample=SAMPLES),
+        expand("02.gvcf/{chrom}/{sample}.g.vcf.gz", sample=SAMPLES, chrom=CHROMS),
+        expand("03.vcf/{chrom}.vcf.gz", chrom=CHROMS),
+        expand("04.filter/{chrom}.marked.vcf.gz", chrom=CHROMS),
+
+
+rule fastpQC:
+    input:
+        raw1 = "00.mergefq/{sample}/{sample}_1.fq.gz",
+        raw2 = "00.mergefq/{sample}/{sample}_2.fq.gz"
+    output:
+        cleaned1 = "01.mapping/{sample}/{sample}_1.clean.fq.gz",
+        cleaned2 = "01.mapping/{sample}/{sample}_2.clean.fq.gz",
+        html = "01.mapping/{sample}/{sample}.html",
+        json = "01.mapping/{sample}/{sample}.json"
+    threads: 4
+    shell:
+        """
+        fastp -i {input.raw1} -I {input.raw2} -o {output.cleaned1} -O {output.cleaned2} \
+            --html {output.html} --json {output.json} --thread {threads}
+        """
+
+rule map_sort:
+    input:
+        reference = REFFA,
+        cleaned1 = "01.mapping/{sample}/{sample}_1.clean.fq.gz",
+        cleaned2 = "01.mapping/{sample}/{sample}_2.clean.fq.gz"
+    output:
+        sortbam = "01.mapping/{sample}/{sample}.sort.bam"
+    params:
+        RGheader = "@RG\\tID:{sample}\\tLB:{sample}\\tPL:ILLUMINA\\tSM:{sample}"
+    threads: 12
+    shell:
+        """
+        bwa mem -R "{params.RGheader}" \
+            -t {threads} {input.reference} {input.cleaned1} {input.cleaned2} | \
+        samtools sort --reference {input.reference} -o {output.sortbam} --output-fmt BAM - --threads {threads}
+        """
+
+rule MarkDuplicates:
+    input:
+        sortbam = "01.mapping/{sample}/{sample}.sort.bam"
+    output:
+        mkdupbam = "01.mapping/{sample}/{sample}.mkdup.bam",
+        metrics = "01.mapping/{sample}/{sample}.marked_dup_metrics.txt"
+    threads: 8
+    shell:
+        """
+        gatk --java-options "-XX:ParallelGCThreads={threads}" MarkDuplicates --spark-runner LOCAL \
+            -I {input.sortbam} -O {output.mkdupbam} -M {output.metrics} \
+            --CREATE_INDEX true --VALIDATION_STRINGENCY SILENT --REMOVE_DUPLICATES true
+        """
+
+rule HaplotypeCaller:
+    input:
+        reference = REFFA,
+        mkdupbam = "01.mapping/{sample}/{sample}.mkdup.bam"
+    output:
+        gvcf = "02.gvcf/{chrom}/{sample}.g.vcf.gz"
+    threads: 8
+    shell:
+        """
+        gatk --java-options "-XX:ParallelGCThreads={threads}" HaplotypeCaller \
+            -R {input.reference} -L {wildcards.chrom} \
+            -I {input.mkdupbam} -ERC GVCF -O {output.gvcf}
+        """
+
+rule CombineGVCFs:
+    input:
+        reference = REFFA,
+        gvcfs =  expand("02.gvcf/{chrom}/{sample}.g.vcf.gz", sample=SAMPLES, chrom=CHROMS)
+    output:
+        gvcflist = "02.gvcf/{chrom}.gvcf.list",
+        gvcf = "02.gvcf/{chrom}.g.vcf.gz"
+    threads: 8
+    shell:
+        """
+        ls {input.gvcfs} | grep "^02.gvcf/{wildcards.chrom}/" > {output.gvcflist}
+        gatk --java-options "-XX:ParallelGCThreads={threads}" CombineGVCFs \
+            -R {input.reference} -V {output.gvcflist} -O {output.gvcf}
+        """
+
+rule GenotypeGVCFs:
+    input:
+        reference = REFFA,
+        dbsnp = DBSNP,
+        gvcf = "02.gvcf/{chrom}.g.vcf.gz"
+    output:
+        vcf = "03.vcf/{chrom}.vcf.gz"
+    threads: 8
+    shell:
+        """
+        gatk --java-options "-XX:ParallelGCThreads={threads}" GenotypeGVCFs \
+            -L {input.dbsnp} --include-non-variant-sites \
+            -R {input.reference} -V {input.gvcf} -O {output.vcf}
+        """
+
+rule VariantFiltration:
+    input:
+        rawvcf = "03.vcf/{chrom}.vcf.gz"
+    output:
+        mkvcf = "04.filter/{chrom}.marked.vcf.gz"
+    threads: 8
+    shell:
+        """
+        # HardFilter for SNPs
+        gatk --java-options "-XX:ParallelGCThreads={threads}" VariantFiltration \
+            -V {input.rawvcf} -O {output.mkvcf} \
+            -filter "QD < 2.0" --filter-name "QD2" \
+            -filter "SOR > 3.0" --filter-name "SOR3" \
+            -filter "FS > 60.0" --filter-name "FS60" \
+            -filter "MQ < 40.0" --filter-name "MQ40" \
+            -filter "MQRankSum < -12.5" --filter-name "MQRankSum-12.5" \
+            -filter "ReadPosRankSum < -8.0" --filter-name "ReadPosRankSum-8" \
+            -filter "ExcessHet > 54.69" --filter-name "ExcessHet"
+        """

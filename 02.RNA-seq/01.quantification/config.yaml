@@ -1,0 +1,19 @@
+reffa: /storage/public/home/2020060185/genome/sheep/reference/sheep.fna
+gtf: /storage/public/home/2020060185/genome/sheep/reference/sheep.gtf
+staridx: /storage/public/home/2020060185/genome/sheep/reference/staridx
+salmonidx: /storage/public/home/2020060185/genome/sheep/reference/salmonidx/sheep.salmon
+enhancerSAF: /storage/public/home/2020060185/genome/sheep/reference/enhancer.saf
+consExonGTF: /storage/public/home/2020060185/genome/sheep/reference/sheep.cons_exon.gtf
+intronGTF: /storage/public/home/2020060185/genome/sheep/reference/sheep.intron.gtf
+threeUTRBED: /storage/public/home/2020060185/genome/sheep/reference/sheep.3utr.bed
+dbsnp: /storage/public/home/2020060185/genome/sheep/refpanel/Sheep3518.maf0.01.vcf
+dbbinlist: /storage/public/home/2020060185/genome/sheep/refpanel/bins/5M_2M/bins.txt
+bindir: /storage/public/home/2020060185/genome/sheep/refpanel/bins/5M_2M
+samplelist: /storage/public/home/2020060185/00.sheep_goatGTEx/01.sheepGTEx/02.MP2/01.pipeline/sample.list
+Dapars2DIR: /storage/public/home/2020060185/software/DaPars2-master
+wasppy: /storage/public/home/2020060185/anaconda3/envs/WASP/bin/python
+waspDIR: /storage/public/home/2020060185/software/WASP
+leafcutterDIR: /storage/public/home/2020060185/software/leafcutter-master
+phaserDIR: /storage/public/home/2020060185/software/phaser
+blacklist: /storage/public/home/2020060185/genome/sheep/reference/mappability/chrAuto_75_2_0.5.bed
+genebed: /storage/public/home/2020060185/00.sheep_goatGTEx/01.sheepGTEx/01.MP1/02.stat/04.MP1/gene.bed #  gene location of bed format: chr\tstart\tend\tgene_id

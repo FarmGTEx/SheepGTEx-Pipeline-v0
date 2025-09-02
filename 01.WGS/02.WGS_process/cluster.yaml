@@ -1,0 +1,17 @@
+## cluster.yaml
+__default__:
+    partition: "normal"
+    cpus: 1
+    mem: 8000000
+    name: "{rule}.{wildcards}"
+    error: Logs/{rule}.{wildcards}.%J.log
+    output: Logs/{rule}.{wildcards}.%J.log
+
+fastpQC:
+    cpus: 4
+    mem: 32000000
+    
+map_sort:
+    cpus: 4
+    mem: 32000000
+    

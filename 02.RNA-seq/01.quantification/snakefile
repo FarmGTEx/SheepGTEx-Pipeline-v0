@@ -1,0 +1,94 @@
+# Author: Mian Gong
+# Date: May 25, 2023
+# Mail: gongmian2767@126.com
+
+
+######################################################################################################################
+##                                                                                                                  ##
+##                         The pipeline is used for read alignment and expression quantification individually from RNA-seq data                                    ##
+##                                                                                                                  ##
+######################################################################################################################
+
+import pandas as pd
+import glob, re, os
+
+
+# Input reference and annotation
+GTFFILE = config["gtf"]
+REFFA = config["reffa"]
+STARIDX = config["staridx"]
+SALMONIDX = config["salmonidx"]
+SALMONRPIDX = config["salmonrpidx"]
+ENHANCERSAF = config["enhancerSAF"]
+CONSEXONGTF = config["consExonGTF"]
+INTRONGTF = config["intronGTF"]
+THREEUTRBED = config["threeUTRBED"]
+BLACKLIST = config["blacklist"]
+GENEBED = config["genebed"]
+
+
+# Input reference panel
+BINDIR = config["bindir"]
+DBSNP = config["dbsnp"]
+DBBINLIST = config["dbbinlist"]
+DBBINS = [line.strip() for line in open(DBBINLIST,'r')]
+
+# Input samples and tissues. File of sample name without header. One per line
+SAMPLELIST = config["samplelist"]
+df = pd.read_csv(SAMPLELIST, sep='\t', header=None)
+SAMPLES = list(set(df[0]))
+
+# Input chromosome
+CHROMS = [f'chr{i}' for i in range(1,27)] ; CHROMS.append('chrX') ; CHROMS.append('chrY') # chromosomes for sheep
+
+# Input softwares
+DAPARS2DIR = config["Dapars2DIR"]
+WASPPY = config["wasppy"] #python of WASP environment
+WASPDIR = config["waspDIR"]
+LEAFCUTTERDIR = config["leafcutterDIR"]
+PHASERDIR = config["phaserDIR"]
+
+
+rule all:
+    input:
+        expand("01.fastpQC/{sample}/{sample}.html", sample=SAMPLES),
+        expand("01.fastpQC/{sample}/{sample}.json", sample=SAMPLES),
+        expand("01.fastpQC/{sample}/md5.txt", sample=SAMPLES),
+        expand("02.STAR2pass/{sample}/{sample}_Aligned.sortedByCoord.out.bam", sample=SAMPLES),
+        expand("02.STAR2pass/{sample}/{sample}_Log.final.out", sample=SAMPLES),
+        expand("02.STAR2pass/{sample}/md5.txt", sample=SAMPLES),
+        expand("03.mkdup/{sample}/{sample}_bqsr.cram", sample=SAMPLES),
+        expand("03.mkdup/{sample}/md5.txt", sample=SAMPLES),
+        expand("04.MP1/gene/{sample}/{sample}_stringtie.tsv", sample=SAMPLES),
+        expand("04.MP1/gene/{sample}/{sample}_featureCounts.tsv", sample=SAMPLES),
+        expand("04.MP1/exon/{sample}/{sample}_featureCounts.tsv", sample=SAMPLES),
+        expand("04.MP1/enhancer/{sample}/{sample}_featureCounts.tsv", sample=SAMPLES),
+        expand("04.MP1/transcript/{sample}/quant.sf", sample=SAMPLES),
+        expand("02.STAR2pass/{sample}/{sample}_Aligned.sortedByCoord.out.bam.wig", sample=SAMPLES),
+        expand("02.STAR2pass/{sample}/{sample}_Aligned.sortedByCoord.out.bam.wig.mapped_reads.txt", sample=SAMPLES),
+        "04.MP1/3UTRpolya/all.mapped_reads.txt",
+        "04.MP1/3UTRpolya/all_mapped_reads.txt",
+        "04.MP1/3UTRpolya/all.config",
+        expand("04.MP1/3UTRpolya/all_{chrom}/all_result_temp.{chrom}.txt", chrom=CHROMS),
+        expand("04.MP1/RNA_stability/{sample}/{sample}.consExons.tsv", sample=SAMPLES),
+        expand("04.MP1/RNA_stability/{sample}/{sample}.introns.tsv", sample=SAMPLES),
+        "05.GLIMPSE2impute/all.bam.list",
+        expand("05.GLIMPSE2impute/{chrom}.bcf", chrom=CHROMS),
+        expand("06.recalINFO/{chrom}.vcf.gz", chrom=CHROMS),
+        "06.recalINFO/chrAuto.info.vcf.gz",
+        "06.recalINFO/chrAuto.filtered.vcf.gz",
+        expand("07.WASP_STAR/{sample}/{sample}_Log.final.out", sample=SAMPLES),
+        expand("07.WASP_STAR/{sample}/{sample}_Aligned.sortedByCoord.out.filtered.bam", sample=SAMPLES),
+        expand("07.WASP_STAR/{sample}/{sample}_Aligned.sortedByCoord.out.filtered.bam.junc", sample=SAMPLES),
+        expand("08.ASE/{sample}/{sample}.haplotypic_counts.txt", sample=SAMPLES),
+        expand("08.ASE/{sample}/{sample}_phaser.gene_ae.txt", sample=SAMPLES),
+
+
+for smk in glob.glob("Rules/*.smk"):
+    include: f"{smk}"
+    with open(smk, 'r') as f:
+        for line in f:
+            r = re.findall('^rule (\w+):', line)
+            if len(r) > 0:
+                # make Log directories of different rules
+                os.makedirs(f'Logs/{r[0]}', exist_ok=True)

@@ -53,8 +53,8 @@ echo "Rscript \"$prog_dir/gtf_to_txt.R\" --gtf \"$gene_annot_fn\" \
                      -o \"$exon_annot_fn\" \
                      2>&1 | tee \"$log_fn\"" > "$script_fn"
 bash $script_fn
-sed 's/|/\t/g' ../sheep.3utr.bed | grep -vw 'NA' | bedtools sort -i - | bedtools merge -i - -c 5,9 -o distinct,distinct | awk -v OFS="\t" '{print $4,$1,"Gnomon\tUTR",$2,$3,$5,$4}' > $utr_annot_fn
-csvtk join -t -f 'gene_id;gene_id' <(cut -f1-8 $exon_annot_fn $utr_annot_fn | grep 'chr[0-9]\|gene_id') <(sed '1igene_id\tgene_type' /storage/public/home/2020060185/00.sheep_goatGTEx/01.sheepGTEx/01.MP1/02.stat/04.MP1/gene.annot) > $exon_utr_annot_fn
+sed 's/|/\t/g' ../../sheep.3utr.bed | grep -vw 'NA' | bedtools sort -i - | bedtools merge -i - -c 5,9 -o distinct,distinct | awk -v OFS="\t" '{print $4,$1,"Gnomon\tUTR",$2,$3,$5,$4}' > $utr_annot_fn
+csvtk join -t -f 'gene_id;gene_id' <(cut -f1-8 $exon_annot_fn $utr_annot_fn | grep 'chr[0-9]\|gene_id') <(sed '1igene_id\tgene_type' ../../gene.annot) > $exon_utr_annot_fn
 
 # Time: 3 min 8G
 echo "$script_fn done!"

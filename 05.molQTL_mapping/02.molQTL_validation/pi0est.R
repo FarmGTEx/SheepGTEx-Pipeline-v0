@@ -63,10 +63,11 @@ if ("try-error" %in% class(q_values)) {
 pi1 = 1 - qobj$pi0
 rs = cor(dfp_slope, dfn_slope, use = "complete.obs")
 rz = cor(dfp_zscore, dfn_zscore, use = "complete.obs")
-df <- data.frame(slope1=unlist(dfp_slope), slope2=unlist(dfn_zscore),
+df <- data.frame(slope1=unlist(dfp_slope), slope2=unlist(dfn_slope),
                  zscore1=unlist(dfp_zscore), zscore2=unlist(dfn_zscore))
 
 print(qobj$pvalues[length(qobj$pvalues)])
 fwrite(pval, paste0(outprefix, ".pval.txt"), col.names=FALSE, sep="\t")
 fwrite(list(discover_name, validat_name, tissue, pi1, rs, rz), paste0(outprefix, ".pi1.txt"), col.names=FALSE, sep="\t")
 fwrite(df, paste0(outprefix, ".effect.txt"), sep="\t")
+

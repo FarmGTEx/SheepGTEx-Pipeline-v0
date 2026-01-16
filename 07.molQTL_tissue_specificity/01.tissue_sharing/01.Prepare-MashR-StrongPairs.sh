@@ -8,7 +8,7 @@ awk '$NF=="TRUE"{gsub(/_/,"\t",$8);print $2"\t"$8}' /storage/public/home/2020060
 #> output file: input/strong_pairs.combined_signifpairs.txt (colnames: phenotype_id,variant_id,chr,pos)
 
 ### 2. extract top pairs from nominal results for each tissue
-for tis in `cut -f1 ../tissue40.list | sed '1d'`
+for tis in `cut -f1 /storage/public/home/2020060185/00.sheep_goatGTEx/01.sheepGTEx/03.QTL/01.eQTL/tissue40.list | sed '1d'`
 do
     ls /storage/public/home/2020060185/00.sheep_goatGTEx/01.sheepGTEx/03.QTL/01.eQTL/v1.min40_split/${tis}/results/tensorqtl/nominal/${tis}.cis_qtl_pairs.chr*.txt.gz > input/${tis}.nominal_files.txt
     # extract_pairs

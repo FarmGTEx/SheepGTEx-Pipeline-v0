@@ -52,7 +52,7 @@ bcftools filter -i 'MAF >= 0.01' ./recallINFO/chr${chr}.${2}.snp.recalINFO.vcf.g
 bcftools index -t ./recallINFO/chr${chr}.${2}.maf0.01.recalINFO.vcf.gz --threads 2
 
 chr=$1
-bcftools view -i 'INFO>=0.75' ./recallINFO/chr${chr}.${2}.maf0.01.recalINFO.vcf.gz --threads 4 -Oz -o info0.75/chr${chr}.${2}.maf0.01.filter.vcf.gz 
+bcftools view -i 'INFO>=0.8' ./recallINFO/chr${chr}.${2}.maf0.01.recalINFO.vcf.gz --threads 4 -Oz -o info0.75/chr${chr}.${2}.maf0.01.filter.vcf.gz 
 bcftools index info0.75/chr${chr}.${2}.maf0.01.filter.vcf.gz --threads 4
 less -S chr${1}.1000.maf0.01.filter.vcf.gz |  awk 'BEGIN{OFS="\t"} /^#/ {print $0; next} {$3=$1"_"$2; print $0}' | bgzip -c > final/chr${1}.id.maf0.01.filter.vcf.gz
 bcftools index final/chr${1}.id.maf0.01.filter.vcf.gz

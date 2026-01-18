@@ -1,5 +1,5 @@
 chr=$1
-
+ne=$2  # ne=1000
 mkdir -p ./imputedbcf/${2}/
 
 while IFS="" read -r LINE || [ -n "$LINE" ]; 

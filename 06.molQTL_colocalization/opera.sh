@@ -9,7 +9,7 @@ do
 	mkdir -p ${tis}/opera/local/${gene}
 	chr=`zcat ${tis}/phenotypes/eQTL.expression.bed.gz | awk -v g=${gene} '$4==g' | cut -f1`
 	pthresh=`awk -v g=${gene} '$1==g{print $(NF-1)}' ${tis}/qtls/eQTL.permutation.txt`
-	lead=`awk -v g=${gene} '$1==g{print $7}' ${tis}/qtls/eQTL.permutation.txt`
+	lead=`awk -v g=${gene} 'NR==1||$1==g' ${tis}/qtls/eQTL.permutation.txt | csvtk cut -t -f 'variant_id' | tail -1`
 
 	# stage 0
 	## prepare eQTL input as outcome in GCTA-COJO format

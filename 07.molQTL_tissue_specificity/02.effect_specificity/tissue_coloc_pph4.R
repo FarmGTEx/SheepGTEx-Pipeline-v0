@@ -23,7 +23,8 @@ df$phenotype_id.y = df$phenotype_id
 
 # extract genes
 df = df[phenotype_id %in% genelist]
-sample_size = round(max(df$ma_count.x / df$af.x)/2)
+sample_size1 = round(max(df$ma_count.x / df$af.x)/2)
+sample_size2 = round(max(df$ma_count.y / df$af.y)/2)
 
 # calculate the pph4
 unique_phenotypes <- unique(df$phenotype_id.y)
@@ -35,10 +36,10 @@ for (phenotype in unique_phenotypes) {
   
   gene = unique(df_target$phenotype_id)
   df1_coloc = list(beta=df_target$slope.x, pvalues=df_target$pval_nominal.x,
-                   snp=df_target$variant_id, type="quant", N=rep(sample_size, nrow(df_target)),
+                   snp=df_target$variant_id, type="quant", N=rep(sample_size1, nrow(df_target)),
                    MAF=as.numeric(ifelse(df_target$af.x <= 0.5, df_target$af.x, 1-df_target$af.x)))
   df2_coloc = list(beta=df_target$slope.y, pvalues=df_target$pval_nominal.y,
-                   snp=df_target$variant_id, type="quant", N=rep(sample_size, nrow(df_target)),
+                   snp=df_target$variant_id, type="quant", N=rep(sample_size2, nrow(df_target)),
                    MAF=as.numeric(ifelse(df_target$af.y <= 0.5, df_target$af.y, 1-df_target$af.y)))
   print(phenotype)
   my.res <- coloc.abf(dataset1=df1_coloc, dataset2=df2_coloc)
@@ -51,3 +52,4 @@ for (phenotype in unique_phenotypes) {
   # columns: nsnps PP.H0.abf PP.H1.abf PP.H2.abf PP.H3.abf PP.H4.abf phenotype1 phenotype2 chrom tissue
   fwrite(results, outfile, append=TRUE, col.names=FALSE, sep="\t")
 }
+

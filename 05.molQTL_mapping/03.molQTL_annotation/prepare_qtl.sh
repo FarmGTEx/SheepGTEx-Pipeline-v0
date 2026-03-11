@@ -33,9 +33,9 @@ zcat /storage/public/home/2020060185/00.sheep_goatGTEx/01.sheepGTEx/03.QTL/06.3a
 zcat /storage/public/home/2020060185/00.sheep_goatGTEx/01.sheepGTEx/03.QTL/06.3aQTL/${tis}/results/susier/${tis}.susier.credible.sig.gz | cut -f3 | sed '1d' | sort -u > ${tis}/susier/3aQTL.txt
 
 echo enQTL
-cut -f7 /storage/public/home/2020060185/00.sheep_goatGTEx/01.sheepGTEx/03.QTL/07.enQTL_new/enQTL_new/${tis}/results/tensorqtl/permutation/${tis}.cis_qtl_fdr0.05.eenhancers.txt | sed '1d' | sort -u > ${tis}/lead/enQTL.txt
-zcat /storage/public/home/2020060185/00.sheep_goatGTEx/01.sheepGTEx/03.QTL/07.enQTL_new/enQTL_new/${tis}/results/tensorqtl/nominal/${tis}.cis_qtl_pairs.sig.txt.gz | cut -f2 | sed '1d' | sort -u > ${tis}/qtls/enQTL.txt
-zcat /storage/public/home/2020060185/00.sheep_goatGTEx/01.sheepGTEx/03.QTL/07.enQTL_new/enQTL_new/${tis}/results/susier/${tis}.susier.credible.sig.gz | cut -f3 | sed '1d' | sort -u > ${tis}/susier/enQTL.txt
+cut -f7 /storage/public/home/2020060185/00.sheep_goatGTEx/01.sheepGTEx/03.QTL/07.enQTL/${tis}/results/tensorqtl/permutation/${tis}.cis_qtl_fdr0.05.eenhancers.txt | sed '1d' | sort -u > ${tis}/lead/enQTL.txt
+zcat /storage/public/home/2020060185/00.sheep_goatGTEx/01.sheepGTEx/03.QTL/07.enQTL/${tis}/results/tensorqtl/nominal/${tis}.cis_qtl_pairs.sig.txt.gz | cut -f2 | sed '1d' | sort -u > ${tis}/qtls/enQTL.txt
+zcat /storage/public/home/2020060185/00.sheep_goatGTEx/01.sheepGTEx/03.QTL/07.enQTL/${tis}/results/susier/${tis}.susier.credible.sig.gz | cut -f3 | sed '1d' | sort -u > ${tis}/susier/enQTL.txt
 
 # remove empty files
 find ${tis}/lead -type f -empty -delete

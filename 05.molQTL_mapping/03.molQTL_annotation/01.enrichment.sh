@@ -17,6 +17,9 @@ done
 # 2. OR/FE enrichment
 for tis in `cut -f1 tissue40.list | sed '1d'`
 do
-       jsub -q normal -n 1 -R "span[hosts=1]" -J or_fe_enrichment_${tis} \
-              -e ${tis}/log/or_fe.%J.log -o ${tis}/log/or_fe.%J.log "bash or_fe.sh ${tis}"
+        for qtl in lead susier_lead rank
+        do
+                jsub -q normal -n 1 -R "span[hosts=1]" -J or_fe_${tis}_${qtl} \
+                       -e ${tis}/log/or_fe.${qtl}.%J.log -o ${tis}/log/or_fe.${qtl}.%J.log "bash or_fe.sh ${tis} ${qtl}"
+        done
 done

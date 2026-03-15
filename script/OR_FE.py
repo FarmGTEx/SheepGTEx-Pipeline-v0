@@ -116,7 +116,7 @@ annotation_files = [os.path.join(args.annotation_dir, file) for file in os.listd
 qtl_data = {os.path.basename(file): pd.read_csv(file, header=None, names=['SNP']).squeeze("columns") for file in qtl_files}
 annotation_data = {os.path.basename(file): pd.read_csv(file, header=None, names=['SNP']).squeeze("columns") for file in annotation_files}
 if args.maf_ld_file:
-    maf_ld_data = pd.read_csv(maf_ld_file, sep=' ').dropna().set_index("SNP")
+    maf_ld_data = pd.read_csv(args.maf_ld_file, sep=' ').dropna().set_index("SNP")
     ld_sd = maf_ld_data['ldscore'].std()
 
 # 总SNP集合

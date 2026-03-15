@@ -73,7 +73,7 @@ def get_control_snps(maf_ld_data, ld_sd, qtl_snps_set, maf_match, ld_match, perm
         if snp not in maf_ld_data.index:
             continue
         focal_maf = maf_ld_data.at[snp, "MAF"]
-        focal_ld = maf_ld_data.at[snp, "LDscore"]
+        focal_ld = maf_ld_data.at[snp, "ldscore"]
         maf_low = focal_maf - maf_match
         maf_high = focal_maf + maf_match
         ld_low = focal_ld - ld_match * ld_sd
@@ -82,7 +82,7 @@ def get_control_snps(maf_ld_data, ld_sd, qtl_snps_set, maf_match, ld_match, perm
         # 筛选符合条件的 SNP
         candidates = maf_ld_data[
             (maf_ld_data["MAF"].between(maf_low, maf_high)) &
-            (maf_ld_data["LDscore"].between(ld_low, ld_high))
+            (maf_ld_data["ldscore"].between(ld_low, ld_high))
         ]
         candidates = candidates.drop(index=snp, errors="ignore")
         candidates = candidates[~candidates.index.isin(qtl_snps_set)]
@@ -103,7 +103,7 @@ parser.add_argument('qtl_dir', help='directory of files (end with .txt) of molQT
 parser.add_argument('annotation_dir', help='directory of files (end with .txt) of functional annotation sites.')
 parser.add_argument('site_file', help='file of all sites. variant_id should be included wihout headers')
 parser.add_argument('out_dir', help='directory to save results (end with .csv).')
-parser.add_argument('--maf_ld_file', help='file (end with .txt) of sites with maf and ld information. Three fields should be included wihout headers: variant_id, MAF and ldscore. ldscore could be computed from GCTA')
+parser.add_argument('--maf_ld_file', help='file of ldscore generated from GCTA (end with .score.ld). At lead three fields should be included with header: SNP, MAF and ldscore')
 parser.add_argument('--maf_match', type=float, default=0.02, help='control variants within the range of MAF of the target variants. (default: 0.02)')
 parser.add_argument('--ld_match', type=float, default=0.1, help='control variants with LD score within the s.d. of the focal variant’s LD score. (default: 0.1)')
 args = parser.parse_args()
@@ -116,8 +116,8 @@ annotation_files = [os.path.join(args.annotation_dir, file) for file in os.listd
 qtl_data = {os.path.basename(file): pd.read_csv(file, header=None, names=['SNP']).squeeze("columns") for file in qtl_files}
 annotation_data = {os.path.basename(file): pd.read_csv(file, header=None, names=['SNP']).squeeze("columns") for file in annotation_files}
 if args.maf_ld_file:
-    maf_ld_data = pd.read_csv(args.maf_ld_file, header=None, sep='\t', names=['SNP', 'MAF', 'LDscore']).dropna().set_index("SNP")
-    ld_sd = maf_ld_data['LDscore'].std()
+    maf_ld_data = pd.read_csv(maf_ld_file, sep=' ').dropna().set_index("SNP")
+    ld_sd = maf_ld_data['ldscore'].std()
 
 # 总SNP集合
 all_snps = set(pd.read_csv(args.site_file, header=None).squeeze("columns"))

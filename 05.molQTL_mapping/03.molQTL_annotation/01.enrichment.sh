@@ -4,7 +4,6 @@
 jsub -q fat -n 1 -R "span[hosts=1]" -J snp.ontology -e snp.ontology.%J.log -o snp.ontology.%J.log \
        "bcftools query -f '%CHROM\t%POS\t%INFO/ANN\n' /storage/public/home/2020060185/00.sheep_goatGTEx/01.sheepGTEx/02.MP2/01.pipeline/06.recalINFO/chrAuto.filtered.eff.vcf.gz | gzip -c > snp.ontology.gz"
 bash prepare_annot.sh
-bash prepare_maf_ld.sh
 
 ## 1.2. prepare qtl
 for tis in `cut -f1 tissue40.list | sed '1d'`

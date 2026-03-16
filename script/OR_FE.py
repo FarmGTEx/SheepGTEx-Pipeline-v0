@@ -136,7 +136,10 @@ for qtl_name, qtl_snps in qtl_data.items():
     # 提取MAF-matched和LD-matched control SNPs，保证至少10个重复，且大于1000个位点
     if args.maf_ld_file:
         num_var = len(qtl_snps_set)
-        if num_var > 1000:
+        if num_var > 10000:
+            # downsampling to 10000 for focal SNPs
+            qtl_snps_set_control = get_control_snps(maf_ld_data, ld_sd, set(np.random.choice(list(qtl_snps_set), 10000, replace=False)), args.maf_match, args.ld_match, 10)
+        elif num_var > 1000:
             qtl_snps_set_control = get_control_snps(maf_ld_data, ld_sd, qtl_snps_set, args.maf_match, args.ld_match, 10)
         elif num_var > 10:
             qtl_snps_set_control = get_control_snps(maf_ld_data, ld_sd, qtl_snps_set, args.maf_match, args.ld_match, 100)

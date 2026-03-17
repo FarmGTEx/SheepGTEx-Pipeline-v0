@@ -32,6 +32,7 @@ for tis in `awk 'NR>1&&$2>=200{print $1}' ../tissue40.list`
 do
 	zcat ${tis}/results/omiga/trans_lmm/${tis}.trans_qtl_pairs.crossmap.fdr0.05.txt.gz | sed '1d' | awk -v tis=$tis '{if ($NF=="TRUE"){t+=1}else{f+=1}}END{print tis"\t"t"\t"t+f"\t"t/(t+f)}'
 done >> egenes.txt
+## compare egene numbers/proportions between trans and cis
 csvtk join -t -f 'Tissue;Tissue' egenes.txt ../v1.min40_split/egenes.txt > egenes.with_cis.txt
 ## combine results of trans-eQTLs
 zcat */results/omiga/trans_lmm/*.trans_qtl_pairs.crossmap.fdr0.05.txt.gz | awk 'NR==1||$NF=="TRUE"' > omiga_trans_egenes.txt

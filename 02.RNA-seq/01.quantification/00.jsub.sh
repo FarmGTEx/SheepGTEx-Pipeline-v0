@@ -1,4 +1,5 @@
 #!/bin/bash
+mkdir -p Logs
 for sample in `cut -f1 mergefq.list | sort -u`
 do
 	jsub -q normal -M 8000000 -n 1 -R "span[hosts=1]" -J ${sample}.mergefq \

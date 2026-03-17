@@ -1,4 +1,5 @@
 ### Usage: Per-sample 2-pass mapping (STAR2passmode). STAR parameters are set according to STAR ENCODE standard options for long RNA-seq pipeline, human GTEx (https://github.com/broadinstitute/gtex-pipeline/blob/master/TOPMed_RNAseq_pipeline.md), cattle, pig and chicken GTEx.
+### --outFilterMismatchNmax parameter should be removed or changed to 999 in the next version
 ### 
 rule STAR2pass:
     input:
@@ -29,7 +30,7 @@ rule STAR2pass:
                 --runThreadN {threads} \
                 --readFilesCommand zcat \
                 --outSAMtype BAM SortedByCoordinate \
-                --outFilterMismatchNmax 3 \ # this parameter should be removed or changed to 999 in the next version
+                --outFilterMismatchNmax 3 \
                 --outSAMunmapped Within \
                 --chimSegmentMin 10 \
                 --chimOutType Junctions \
@@ -49,7 +50,7 @@ rule STAR2pass:
                 --runThreadN {threads} \
                 --readFilesCommand zcat \
                 --outSAMtype BAM SortedByCoordinate \
-                --outFilterMismatchNmax 3 \ # this parameter should be removed or changed to 999 in the next version
+                --outFilterMismatchNmax 3 \
                 --outSAMunmapped Within \
                 --chimSegmentMin 10 \
                 --chimOutType Junctions \

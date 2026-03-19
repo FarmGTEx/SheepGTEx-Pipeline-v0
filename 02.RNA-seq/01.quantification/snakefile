@@ -39,7 +39,7 @@ df = pd.read_csv(SAMPLELIST, sep='\t', header=None)
 SAMPLES = list(set(df[0]))
 
 # Input chromosome
-CHROMS = [f'chr{i}' for i in range(1,27)] ; CHROMS.append('chrX') ; CHROMS.append('chrY') # chromosomes for sheep
+CHROMS = [f'chr{i}' for i in range(1,27)] ; CHROMS.append('chrX') #; CHROMS.append('chrY') # chromosomes for sheep
 
 # Input softwares
 DAPARS2DIR = config["Dapars2DIR"]

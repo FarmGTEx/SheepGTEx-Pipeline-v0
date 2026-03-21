@@ -47,7 +47,7 @@ function mergefq() {
             echo `grep -w "^$sample" $samplefile | awk '{print $2}'`
             grep -w "^$sample" $samplefile | awk '{print $2}' | xargs cat > ${outdir}/${sample}/${sample}.fq.gz
         fi
-        touch ${outdir}/${sample}/md5.txt
+        md5sum ${outdir}/${sample}/${sample}*.gz > ${outdir}/${sample}/md5.txt
     elif [ $linenum -eq 1 ];then \
         # single run
         fq1=`grep -w "^$sample" $samplefile | awk '{print $2}'`
@@ -63,7 +63,7 @@ function mergefq() {
             cmd="ln -s $fq1 ${outdir}/${sample}/${sample}.fq.gz"
             echo $cmd ; $cmd
         fi
-        touch ${outdir}/${sample}/md5.txt
+        md5sum ${outdir}/${sample}/${sample}*.gz > ${outdir}/${sample}/md5.txt
     else
         echo "FAILED. No file for $sample, please check."
         exit 1

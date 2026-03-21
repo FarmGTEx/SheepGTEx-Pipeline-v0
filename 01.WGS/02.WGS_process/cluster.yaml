@@ -1,8 +1,8 @@
 ## cluster.yaml
 __default__:
     partition: "normal"
-    cpus: 1
-    mem: 8000000
+    cpus: 8
+    mem: 64000000
     name: "{rule}.{wildcards}"
     error: Logs/{rule}.{wildcards}.%J.log
     output: Logs/{rule}.{wildcards}.%J.log

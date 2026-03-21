@@ -1,6 +1,7 @@
 #!/bin/bash
 job=$1
 source /storage/public/home/2020060185/anaconda3/envs/snakemake/bin/activate snakemake
+ls 00.mergefq > sample.list
 # submit into the cluster
 snakemake -j 100 -s snakefile --configfile config.yaml --latency-wait 60 \
     --printshellcmds --keep-going --nolock --rerun-incomplete \

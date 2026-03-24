@@ -9,6 +9,7 @@ gcta-1.94.1 --bfile chrAuto.filtered.keep --autosome-num 26 --autosome --ld-scor
 ## 1.2. prepare qtl
 for tis in `cut -f1 tissue40.list | sed '1d'`
 do
+       mkdir -p ${tis}/log \
        jsub -q normal -n 1 -R "span[hosts=1]" -J prepare_qtl_${tis} \
               -e ${tis}/log/qtl.%J.log -o ${tis}/log/qtl.%J.log "bash prepare_qtl.sh ${tis}"
        jsub -q normal -n 1 -R "span[hosts=1]" -J prepare_indep_qtl_${tis} \

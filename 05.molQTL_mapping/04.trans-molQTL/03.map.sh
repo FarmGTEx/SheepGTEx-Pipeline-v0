@@ -35,7 +35,7 @@ done >> egenes.txt
 ## compare egene numbers/proportions between trans and cis
 csvtk join -t -f 'Tissue;Tissue' egenes.txt ../v1.min40_split/egenes.txt > egenes.with_cis.txt
 ## combine results of trans-eQTLs
-zcat */results/omiga/trans_lmm/*.trans_qtl_pairs.crossmap.fdr0.05.txt.gz | awk 'NR==1||$NF=="TRUE"' > omiga_trans_egenes.txt
+zcat */results/omiga/trans_lmm/*.trans_qtl_pairs.crossmap.fdr0.05.txt.gz | awk 'NR==1||$1!="tissue"' > omiga_trans_egenes.txt
 zcat */results/omiga/trans_lmm/*.trans_qtl_pairs.crossmap.fdr0.05.sig.txt.gz | awk 'NR==1||$NF=="TRUE"' | pigz -c > omiga_trans.sig.txt.gz
 ## get hotspot
 csvtk join -t -f 'tissue,variant_id;tissue,variant_id' omiga_trans_hotspot.txt omiga_trans_egenes.txt | cut -f4 | sed '1d' | sort -u > trans_hotspot.genelist

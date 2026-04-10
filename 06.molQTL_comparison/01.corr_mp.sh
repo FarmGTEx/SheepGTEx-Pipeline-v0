@@ -25,7 +25,7 @@ cat */results/mp_within/mp.corr.txt | sed '1iPairs\tphenotypes\tPearson correlat
 # calculate the correlation of different isoform/exon expression in a gene within a tissue
 for tis in `cut -f1 tissue40.list | sed '1d'`
 do
-	for qtl in eeQTL isoQTL
+	for qtl in sQTL eeQTL isoQTL stQTL 3aQTL enQTL
 	do
 	jsub -q normal -n 1 -R "span[hosts=1]" -J corr_mp_within_gene_${tis}_${qtl} \
 		-e ${tis}/log/01.corr_mp_within.${qtl}.${tis}.%J.log -o ${tis}/log/01.corr_mp_within.${qtl}.${tis}.%J.log \
@@ -33,7 +33,7 @@ do
 	done
 done
 # combine results
-for qtl in eeQTL isoQTL
+for qtl in sQTL eeQTL isoQTL stQTL 3aQTL enQTL
 do
 	awk 'NR==1||FNR>1' */results/mp_within/${qtl}.within_gene.corr.txt | sed "s/^/${qtl}\t/g" | sed "1s/^${qtl}/qtl/" > ${qtl}.within_gene.corr.txt
 done

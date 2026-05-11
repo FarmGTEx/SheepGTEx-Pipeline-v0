@@ -28,10 +28,10 @@ rule tagging:
     shell:
         """
         echo "[INFO] Calculating tagging for chr{wildcards.chr}"
-        ldak5.2 --calc-tagging {output.tag} \
-                --bfile {input.bfile} \
-                --power -0.25 \
-                --window-kb 1000
+        ldak6.1.linux --calc-tagging {output.tag} \
+                      --bfile {input.bfile} \
+                      --power -0.25 \
+                      --window-kb 1000
         """
 
 # ================================
@@ -69,11 +69,11 @@ rule heritability_qtl:
         """
         mkdir -p results/heritability/{wildcards.trait}
         echo "[INFO] Running LDAK for QTL SNPs ({wildcards.trait})"
-        ldak5.2 --sum-hers {output} \
-                --tagfile results/tagging/chr*_tagging.tagging \
-                --summary {input.sumstats} \
-                --cutoff 0.01 \
-                --check-sums NO
+        ldak6.1.linux --sum-hers {output} \
+                      --tagfile results/tagging/chr*_tagging.tagging \
+                      --summary {input.sumstats} \
+                      --cutoff 0.01 \
+                      --check-sums NO
         """
 
 # ================================
@@ -89,9 +89,9 @@ rule heritability_matched:
         """
         mkdir -p results/heritability/{wildcards.trait}
         echo "[INFO] Running LDAK for matched SNPs ({wildcards.trait})"
-        ldak5.2 --sum-hers {output} \
-                --tagfile results/tagging/chr*_tagging.tagging \
-                --summary {input.sumstats} \
-                --cutoff 0.01 \
-                --check-sums NO
+        ldak6.1.linux --sum-hers {output} \
+                      --tagfile results/tagging/chr*_tagging.tagging \
+                      --summary {input.sumstats} \
+                      --cutoff 0.01 \
+                      --check-sums NO
         """

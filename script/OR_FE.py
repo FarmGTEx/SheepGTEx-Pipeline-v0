@@ -113,14 +113,15 @@ qtl_files = [os.path.join(args.qtl_dir, file) for file in os.listdir(args.qtl_di
 annotation_files = [os.path.join(args.annotation_dir, file) for file in os.listdir(args.annotation_dir) if file.endswith('.txt')]
 
 # 读取所有文件并存储在字典中
-qtl_data = {os.path.basename(file): pd.read_csv(file, header=None, names=['SNP']).squeeze("columns") for file in qtl_files}
-annotation_data = {os.path.basename(file): pd.read_csv(file, header=None, names=['SNP']).squeeze("columns") for file in annotation_files}
+qtl_data = {os.path.basename(file): {line.rstrip() for line in open(file)} for file in qtl_files}
+annotation_data = {os.path.basename(file): {line.rstrip() for line in open(file)} for file in annotation_files}
 if args.maf_ld_file:
     maf_ld_data = pd.read_csv(args.maf_ld_file, sep=' ').dropna().set_index("SNP")
     ld_sd = maf_ld_data['ldscore'].std()
 
 # 总SNP集合
-all_snps = set(pd.read_csv(args.site_file, header=None).squeeze("columns"))
+with open(args.site_file) as f:
+    all_snps = {line.rstrip() for line in f}
 
 # 结果存储列表
 results_or = []
@@ -130,9 +131,7 @@ results_fe_control = []
 qtl_snps_set_control = set()
 
 # 逐一计算每种QTL和功能注释的OR/FE值及95%置信区间
-for qtl_name, qtl_snps in qtl_data.items():
-    qtl_snps_set = set(qtl_snps)
-    
+for qtl_name, qtl_snps_set in qtl_data.items():
     # 提取MAF-matched和LD-matched control SNPs，保证至少10个重复，且大于1000个位点
     if args.maf_ld_file:
         num_var = len(qtl_snps_set)
@@ -147,8 +146,7 @@ for qtl_name, qtl_snps in qtl_data.items():
             qtl_snps_set_control = get_control_snps(maf_ld_data, ld_sd, qtl_snps_set, args.maf_match, args.ld_match, 1000)
         print(qtl_name, num_var, len(qtl_snps_set_control))
     
-    for annotation_name, annotation_snps in annotation_data.items():
-        annotation_snps_set = set(annotation_snps)
+    for annotation_name, annotation_snps_set in annotation_data.items():
         num_var = len(qtl_snps_set)
         
         # OR

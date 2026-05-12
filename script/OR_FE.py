@@ -201,12 +201,12 @@ for qtl_name, qtl_snps in qtl_data.items():
 # 将结果转换为DataFrame并保存
 results_or_df = pd.DataFrame(results_or, columns=['QTL', 'Annotation', 'Odds ratio', '95% CI Low', '95% CI High', 'P-value', 'num_var'])
 results_or_df.to_csv(f'{args.out_dir}/OR_results.csv', index=False)
-
 results_fe_df = pd.DataFrame(results_fe, columns=['QTL', 'Annotation', 'Fold enrichment', '95% CI Low', '95% CI High', 'P-value', 'num_var'])
 results_fe_df.to_csv(f'{args.out_dir}/FE_results.csv', index=False)
 
-results_or_control_df = pd.DataFrame(results_or_control, columns=['QTL', 'Annotation', 'Odds ratio', '95% CI Low', '95% CI High', 'P-value', 'num_var'])
-results_or_control_df.to_csv(f'{args.out_dir}/OR_control_results.csv', index=False)
-
-results_fe_control_df = pd.DataFrame(results_fe_control, columns=['QTL', 'Annotation', 'Fold enrichment', '95% CI Low', '95% CI High', 'P-value', 'num_var'])
-results_fe_control_df.to_csv(f'{args.out_dir}/FE_control_results.csv', index=False)
+if results_or_control:
+    results_or_control_df = pd.DataFrame(results_or_control, columns=['QTL', 'Annotation', 'Odds ratio', '95% CI Low', '95% CI High', 'P-value', 'num_var'])
+    results_or_control_df.to_csv(f'{args.out_dir}/OR_control_results.csv', index=False)
+if results_fe_control:
+    results_fe_control_df = pd.DataFrame(results_fe_control, columns=['QTL', 'Annotation', 'Fold enrichment', '95% CI Low', '95% CI High', 'P-value', 'num_var'])
+    results_fe_control_df.to_csv(f'{args.out_dir}/FE_control_results.csv', index=False)

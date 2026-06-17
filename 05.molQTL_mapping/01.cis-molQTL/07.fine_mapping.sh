@@ -40,6 +40,4 @@ cat */results/susier/*.crediblenum.txt > susier.crediblenum.txt
 cat */results/susier/*.causalnum.txt > susier.causalnum.txt
 ## compare credible sets with independent QTLs
 zcat tensorqtl_independent_qtl.txt.gz | csvtk cut -t -f 'tissue,phenotype_id,rank' | sed '1d' | bedtools groupby -g 1,2 -c 3 -o count -i - | csvtk join -t -H -f '1,2;1,2' susier.crediblenum.txt - | awk '$3>0' | sed '1itissue\tphenotype_id\tcs_count\tnum_rank' > susier_independent.txt
-Rscript /storage/public/home/2020060185/script/susie_independent.R susier_independent.txt eQTL.susier_independent.pdf
-zcat susier.credible.sig.lead.gz | awk -v OFS="\t" '{print $3,$6,$7,$8,$9,$8"/"$9,"SNP","","\t1"}' | sed -e '1d' -e 's/_/:/g' -e 's/chr//g' | sort -u > susier.credible.sig.lead.chip.txt
-zcat susier.credible.sig.lead.gz | awk -v OFS="\t" '$5>0.2{print $3,$6,$7,$8,$9,$8"/"$9,"SNP","","\t1"}' | sed -e '1d' -e 's/_/:/g' -e 's/chr//g' | sort -u > susier.credible.sig.lead.pip0.2.chip.txt
+Rscript susie_independent.R susier_independent.txt eQTL.susier_independent.pdf
